@@ -1,14 +1,20 @@
+#include "common.h"
 #include "Node.h"
+
+USESTD
 
 class Solution {
 public:
     bool isValidBST(TreeNode* root) {
+        if (node == nullptr) {
+            return false;
+        }
+           
+        int value
         queue<TreeNode *> q;
         TreeNode *node = root;
-        
-        if (node)
-            q.push(node);
-        
+        q.push(node);
+
         while (!q.empty()) {
             node = q.front();
             q.pop();

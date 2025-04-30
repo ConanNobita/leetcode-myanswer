@@ -2,58 +2,99 @@
 
 USESTD
 
+#include "common.h"
+
+USESTD
+
 class Solution {
+    enum Direction {
+        Left    = 0,
+        Right   = 1,
+        Up      = 2,
+        Down    = 3
+    };
+
 public:
     vector<int> spiralOrder(vector<vector<int>>& matrix) {
-        vector<int> v;
+        vector<int> result;
+        if (matrix.size() == 0) {
+            return result;
+        }
+          
+        vector<int> row0 = matrix[0];
+        Direction direction = Direction::Right;
 
-        if (matrix.size() == 0)
-            return v;
-
-        int rbegin = 0, cbegin = 0;        
-        int rlen = matrix.size();
-        int clen = matrix[0].size();
-        int direction = -1;
-
-        while (clen != 0 && rlen != 0) {
+        int rows = matrix.size(), columns = row0.size();
+		int row = 0, column = 0, step = 0, total = rows * columns;
+		int vertical = rows, horizontal = columns;
+     
+        while (step < total) {
             switch (direction) {
-                case -1:    // right
-                    for (int i = cbegin; i < clen; i++)
-                        v.push_back(matrix[rbegin][i]);
-                    clen -= 1;
-                    cbegin += clen; rbegin += 1;
-                    direction = 1;
-                    break;
-                
-                case -2:    // left
-                    for (int i = cbegin; i >= cbegin - clen; i--) 
-                        v.push_back(matrix[rbegin][i]);
-                    rlen -= 1;
-                    cbegin -= clen; rbegin -= 1;
-                    direction = 2;
-                    break;
-                
-                case 1:     // down
-                    for (int i = rbegin; i < rlen; i++)
-                        v.push_back(matrix[i][cbegin]);
-                    clen -= 1; rlen -= 1;
-                    cbegin -= 1; rbegin += rlen - 1;
-                    direction = -2;
-                    break;
-                
-                case 2:     // up
-                    for (int i = rbegin; i >= rbegin - rlen; i--) 
-                        v.push_back(matrix[i][cbegin]);
-                    rlen -= 1;
-                    cbegin += 1; rbegin -= rlen;
-                    direction = -1;
-                    break;
-                
+                case Direction::Left:
+                {
+                    vector<int>& rowArray = matrix[row];
+                    for (int i = 0; i < horizontal; i++) {
+                        result.push_back(rowArray[column--]);
+                        step++;
+                    }
+
+                    row--;
+                    column++;
+                    vertical--;
+                    direction = Direction::Up;
+                }
+                break;
+
+                case Direction::Right:
+                {
+                    vector<int>& rowArray = matrix[row];
+                    for (int i = 0; i < horizontal; i++) {
+						result.push_back(rowArray[column++]);
+						step++;
+                    }
+
+                    row++;
+                    column--;
+                    vertical--;
+					direction = Direction::Down;
+                }
+                break;
+
+                case Direction::Up:
+                {
+                    for (int i = 0; i < vertical; i++) {
+                        vector<int>& rowArray = matrix[row--];
+                        result.push_back(rowArray[column]);
+                        step++;
+                    }
+
+                    row++;
+                    column++;
+                    horizontal--;
+                    direction = Direction::Right;
+                }
+                break;
+
+                case Direction::Down:
+                {
+                    for (int i = 0; i < vertical; i++) {
+						vector<int>& rowArray = matrix[row++];
+                        result.push_back(rowArray[column]);
+                        step++;
+                    }
+
+                    row--;
+                    column--;
+                    horizontal--;
+					direction = Direction::Left;
+                }
+                break;
+
                 default:
                     break;
             }
         }
 
-        return v;
+        return result;
     }
 };

@@ -5,27 +5,39 @@ USESTD
 
 class Solution {
 public:
-    TreeNode* increasingBST(TreeNode* root) {
-        stack<TreeNode *> s;
-        TreeNode newRoot(0), *pNew = &newRoot;
-        TreeNode *node = root;
+	TreeNode* increasingBST(TreeNode* root) {
+		if (root == nullptr) {
+			return nullptr;
+		}
 
-        while (node != nullptr || !s.empty()) {
-            while (node != nullptr) {
-                s.push(node);
-                node = node->left;
-            }
+		int minValue = root->val;
+		TreeNode* current = nullptr;
+		TreeNode* minNode = nullptr;
 
-            if (s.empty()) break;
+		dfs(root, &current, &minNode, minValue);
+		return minNode;
+	}
 
-            node = s.top();
-            pNew->right = node;
-            pNew = pNew->right;
+private:
+	void dfs(TreeNode* node, TreeNode** current, TreeNode** minNode, int& minValue) {
+		if (node == nullptr) {
+			return;
+		}
 
-            s.pop(); 
-            node = node->right;
-        }
+		TreeNode* right = node->right;
+		dfs(node->left, current, minNode, minValue);
 
-        return newRoot.right;
-    }
+		if (node->val <= minValue) {
+			*minNode = node;
+			minValue = node->val;
+		}
+
+		if (*current != nullptr) {
+			(*current)->right = node;
+		}
+
+		node->left = nullptr;
+		*current = node;
+		dfs(right, current, minNode, minValue);
+	}
 };

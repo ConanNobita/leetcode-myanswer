@@ -1,59 +1,56 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include "common.h"
+#include "node.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+USESTD
 
-#define STB_IMAGE_STATIC
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
-
-int main(int argc, char *argv[])
-{
-	if (argc < 3) 
-	{
-		fprintf(stderr, "please specify img.txt\n");
-		return EXIT_FAILURE;
-	}
-
-	const char *img_txt = argc[1];
-	
-	int line_count = 0;
-	int line_skip = atoi(argv[2]);
-
-	FILE *img_file = fopen(img_txt, "r");
-
-	if (img_file == NULL) 
-	{
-		fprintf(stderr, "open %s failed\n", img_txt);
-		return EXIT_FAILURE;
-	}
-
-	int width, height, channel;
-	char *line_buffer[128] = {'\0'};
-	
-	stbi_flip_vertically_on_write(1);
-
-	while (!feof(img_file))
-	{
-		fgets(line_buffer, 127, img_file);
-		line_count++;
-
-		if (line_count < line_skip)
-		{
-			continue;
+class Solution {
+public:
+	bool exist(vector<vector<char>>& board, string word) {
+		int rows = board.size();
+		if (rows == 0 || word.empty()) {
+			return false;
 		}
-		
-		stb_uc *data = stbi_load(line_buffer, &width, &height, &channel, 0);
-		if (data != NULL) 
-		{
-			stbi_write_jpg(line_buffer, width, height, channel,
-                       data, 16);
-			stbi_image_free(data);
 
-			printf("%s\n", line_buffer);
-		}
+		int count = 0;
+		vector<char>& column0 = board[0];
+		vector<vector<int>> cache(rows, vector<int>(column0.size(), 0));
+
+		backtract(board, cache, word, 0, 0, column0.size(), count);
+		return count == word.size();
 	}
 
-	return EXIT_SUCCESS;
+private:
+	void backtract(vector<vector<char>>& board, vector<vector<int>>& cache, string& word, int rows, int columns, int row, int column, int& count) {
+		if (row < 0 || row >= board.size() || column < 0 || column >= columns) {
+			return;
+		}
+
+		if (cache[row][column] != 0 || count == word.size()) {
+			return;
+		}
+
+		if (board[row][column] == word[count]) {
+			if ((row > 0 && cache[row - 1][column] == 1) || (row < rows - 1 && cache[row + 1][column] == 1) ||
+				(column > 0 && cache[row][column - 1] == 1) || (column < columns - 1 && cache[row][column + 1] == 1)) {
+				count++;
+			}
+		}
+
+		backtract(board, cache, word, row - 0, column - 1, columns, count);
+		backtract(board, cache, word, row + 0, column + 1, columns, count);
+		backtract(board, cache, word, row - 1, column - 0, columns, count);
+		backtract(board, cache, word, row + 1, column + 0, columns, count);
+	}
+};
+
+int main(int argc, char* argv[]) {
+	vector<vector<char>> board = {
+		{'A', 'B', 'C', 'E'},
+		{'S', 'F', 'C', 'S'},
+		{'A', 'D', 'E', 'E'}
+	};
+
+	Solution solution;
+	solution.exist(board, "ABCCED");
+	return 0;
 }

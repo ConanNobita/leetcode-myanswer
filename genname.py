@@ -1,43 +1,48 @@
 #!/usr/bin/python
 #-*- coding: UTF-8 -*-
 
-import sys
 import os
+import sys
 
 args = sys.argv
 argc = len(args)
 
-directory = ''
-extension = ''
-filename = ''
-file_type = args[argc - 1]
+if argc < 4:
+    sys.exit()
 
-if file_type == 'cpp':
+number      = args[1]
+question    = args[2]
+file_type   = args[3]
+directory   = None 
+
+if file_type == "cpp":
     directory = 'algorithm/'
-    extension = '.cpp'
-elif file_type == 'db':
-    directory = 'database/'
-    extension = '.sql'
+elif file_type == 'sql':
+    directory = 'sql/'
 elif file_type == 'sh':
     directory = 'shell/'
-    extension = '.sh'
-
-if directory != '':
-    filename = args[1]
-    for i in range(2, argc - 1):
-        word = args[i]
-        if word is str:
-            filename += word
-        else:
-            filename += '{}'.format(word)
+else:
+    sys.exit()
     
-        if i < argc - 1:
-            filename += '_'
+words = []
+lastIndex = -1
+str_len = len(question)
 
-    filename += extension
-    print(filename)
+for i in range(0, str_len + 1):
+    if i == str_len:
+        substr = question[lastIndex + 1:i]
+        words.append(substr.capitalize())
+        break
+        
+    ch = question[i]
+    if ch == '-':
+        substr = question[lastIndex + 1:i]
+        words.append(substr.capitalize())
+        lastIndex = i
+    
+filename = '{}.{}.{}'.format(number, '_'.join(words), file_type)
+filepath = directory + filename
 
-    filepath = directory + filename
-    if not os.path.exists(filepath):
-        with open(filepath, 'w') as fd:
-            fd.close()
+if not os.path.exists(filepath):
+    with open(filepath, 'w') as fd:
+        fd.close()
