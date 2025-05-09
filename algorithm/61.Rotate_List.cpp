@@ -34,12 +34,12 @@ private:
         if (node->next == nullptr) {
             *lastNodePtr = node;
             return;
-        }else {
-            rotate(node->next, kNodePtr, lastNodePtr, back, k);
-            if (*kNodePtr == nullptr && ++back == k) {
-                *kNodePtr = node;
-                return;
-            }
+        } 
+
+        rotate(node->next, kNodePtr, lastNodePtr, back, k);
+        if (*kNodePtr == nullptr && ++back == k) {
+            *kNodePtr = node;
+            return;
         }
     }
 };
