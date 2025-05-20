@@ -42,7 +42,7 @@ for i in range(0, str_len + 1):
     
 filename = '{}.{}.{}'.format(number, '_'.join(words), file_type)
 filepath = directory + filename
-
+print(filepath)
 if not os.path.exists(filepath):
     with open(filepath, 'w') as fd:
         fd.close()
